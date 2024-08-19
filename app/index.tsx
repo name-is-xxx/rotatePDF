@@ -2,6 +2,12 @@
 import styles from "@/app/page.module.css";
 import { lusitana } from "@/app/ui/fonts";
 import { useCallback, useState } from "react";
+import { pdfjs, Document, Page, Thumbnail } from "react-pdf";
+
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url
+).toString();
 
 function MoreChoice() {
   return (
@@ -25,11 +31,66 @@ function MoreChoice() {
   );
 }
 
-export default function Page() {
+// 未载入文件前
+function FileBefore({ setUpload, setFile }: any) {
+  function hadleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    // 文件选中并获取第一个文件
+    if (files && files.length > 0) {
+      setUpload(true);
+      setFile(files[0]);
+    }
+  }
+
+  return (
+    <div className="bg-[#fff] h-[350px] w-[275px] relative">
+      <input
+        className="cursor-pointer hidden"
+        type="file"
+        id="input-file-upload"
+        accept=".pdf"
+        onChange={hadleUpload}
+      />
+      <label
+        className="h-full flex items-center justify-center border rounded transition-all bg-white border-dashed border-stone-300"
+        htmlFor="input-file-upload"
+      >
+        <div className="flex flex-col items-center space-y-3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            className="w-[32px]"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
+            />
+          </svg>
+          <p className="pointer-events-none font-medium text-sm leading-6 pointer opacity-75">
+            Click to upload or drag and drop
+          </p>
+        </div>
+      </label>
+    </div>
+  );
+}
+
+export default function Index() {
   const [show, setShow] = useState(false);
+  const [upload, setUpload] = useState(false);
+  const [file, setFile] = useState<File>();
+  const [numPages, setNumPages] = useState<number>();
   const handleShow = useCallback(() => {
     setShow(!show);
   }, [show]);
+
+  function onDocumentLoadSuccess({ numPages: nextNumPages }: any): void {
+    setNumPages(nextNumPages);
+  }
 
   return (
     <main>
@@ -76,34 +137,28 @@ export default function Page() {
           </p>
         </div>
         <div className="w-full flex justify-center">
-          <div className="bg-[#fff] h-[350px] w-[275px] flex items-center justify-center relative">
-            {/* <input type="file" id="input-file-upload" accept=".pdf" /> */}
-            <div className="flex flex-col items-center space-y-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                className="w-[32px]"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                />
-              </svg>
-              <p className="pointer-events-none font-medium text-sm leading-6 pointer opacity-75">
-                Click to upload or drag and drop
-              </p>
+          {!upload ? (
+            <FileBefore setUpload={setUpload} setFile={setFile} />
+          ) : (
+            <div>
+              <Document file={file} onLoadSuccess={onDocumentLoadSuccess}>
+                {Array.from(new Array(numPages), (_, index) => (
+                  <div className="bg-[#fff] p-2.5">
+                    <Thumbnail
+                      width={176}
+                      height={250}
+                      key={index + 1}
+                      pageNumber={index + 1}
+                    />
+                    <div className="text-center">{index + 1}</div>
+                  </div>
+                ))}
+              </Document>
             </div>
-          </div>
+          )}
         </div>
       </div>
       <footer className="bg-white" aria-labelledby="footer-heading">
-        <h2 id="footer-heading" className="sr-only">
-          Footer
-        </h2>
         <div className="mx-auto max-w-7xl px-6 pb-8 mt-8 sm:mt-12 lg:px-8 lg:mt-16 border-t border-gray-900/10 pt-16">
           <div className="xl:grid xl:grid-cols-3 xl:gap-8">
             <div className="space-y-8">
