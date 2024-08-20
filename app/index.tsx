@@ -81,6 +81,7 @@ function FileBefore({ setUpload, setFile }: any) {
 
 export default function Index() {
   const [show, setShow] = useState(false);
+  const [rotate, setRotate] = useState(0);
   const [upload, setUpload] = useState(false);
   const [file, setFile] = useState<File>();
   const [numPages, setNumPages] = useState<number>();
@@ -141,6 +142,66 @@ export default function Index() {
             <FileBefore setUpload={setUpload} setFile={setFile} />
           ) : (
             <div>
+              <div className="flex justify-center items-center space-x-3 selecto-ignore">
+                <button
+                  className="bg-orange text-white px-3 py-2.5 rounded"
+                  aria-label="全部旋转"
+                  data-microtip-position="top"
+                  role="tooltip"
+                >
+                  全部旋转
+                </button>
+                <button
+                  className="bg-blackgray text-white px-3 py-2.5 rounded"
+                  aria-label="删除此PDF并选择新的"
+                  data-microtip-position="top"
+                  role="tooltip"
+                >
+                  删除 PDF
+                </button>
+                <button
+                  className="bg-[#ff612f] shadow rounded-full p-2 flex items-center justify-center hover:scale-105 grow-0 shrink-0 disabled:opacity-50 !bg-white"
+                  aria-label="放大"
+                  data-microtip-position="top"
+                  role="tooltip"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"
+                    />
+                  </svg>
+                </button>
+                <button
+                  className="bg-[#ff612f] shadow rounded-full p-2 flex items-center justify-center hover:scale-105 grow-0 shrink-0 disabled:opacity-50 !bg-white"
+                  aria-label="缩小"
+                  data-microtip-position="top"
+                  role="tooltip"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM13.5 10.5h-6"
+                    />
+                  </svg>
+                </button>
+              </div>
               <Document file={file} onLoadSuccess={onDocumentLoadSuccess}>
                 {Array.from(new Array(numPages), (_, index) => (
                   <div className="bg-[#fff] p-2.5">
@@ -149,6 +210,10 @@ export default function Index() {
                       height={250}
                       key={index + 1}
                       pageNumber={index + 1}
+                      rotate={rotate}
+                      onClick={() => {
+                        setRotate(rotate + 90);
+                      }}
                     />
                     <div className="text-center">{index + 1}</div>
                   </div>
