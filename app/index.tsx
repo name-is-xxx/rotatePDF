@@ -2,7 +2,7 @@
 import styles from "@/app/page.module.css";
 import { lusitana } from "@/app/ui/fonts";
 import { useCallback, useState } from "react";
-import { pdfjs, Document, Page, Thumbnail } from "react-pdf";
+import { pdfjs, Document, Thumbnail } from "react-pdf";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -81,16 +81,29 @@ function FileBefore({ setUpload, setFile }: any) {
 
 export default function Index() {
   const [show, setShow] = useState(false);
-  const [rotate, setRotate] = useState(0);
   const [upload, setUpload] = useState(false);
   const [file, setFile] = useState<File>();
-  const [numPages, setNumPages] = useState<number>();
+  const [numPages, setNumPages] = useState();
+  const [rotate, setRotate] = useState<number[]>([]);
   const handleShow = useCallback(() => {
     setShow(!show);
   }, [show]);
 
   function onDocumentLoadSuccess({ numPages: nextNumPages }: any): void {
     setNumPages(nextNumPages);
+    setRotate(Array(nextNumPages).fill(0));
+  }
+
+  function handleRotate(index: number) {
+    let temp = [...rotate];
+    if (index === -1) {
+      temp.map((_, n) => {
+        temp[n] += 90;
+      });
+    } else {
+      temp[index] += 90;
+    }
+    setRotate(temp);
   }
 
   return (
@@ -148,6 +161,7 @@ export default function Index() {
                   aria-label="全部旋转"
                   data-microtip-position="top"
                   role="tooltip"
+                  onClick={() => handleRotate(-1)}
                 >
                   全部旋转
                 </button>
@@ -156,6 +170,11 @@ export default function Index() {
                   aria-label="删除此PDF并选择新的"
                   data-microtip-position="top"
                   role="tooltip"
+                  onClick={() => {
+                    setUpload(false);
+                    setFile(undefined);
+                    setNumPages(undefined);
+                  }}
                 >
                   删除 PDF
                 </button>
@@ -202,23 +221,27 @@ export default function Index() {
                   </svg>
                 </button>
               </div>
-              <Document file={file} onLoadSuccess={onDocumentLoadSuccess}>
+              {/* <div > */}
+              <Document
+                className="m-5"
+                file={file}
+                onLoadSuccess={onDocumentLoadSuccess}
+              >
                 {Array.from(new Array(numPages), (_, index) => (
-                  <div className="bg-[#fff] p-2.5">
+                  <div className="bg-[#fff] p-2.5 m-3">
                     <Thumbnail
                       width={176}
                       height={250}
                       key={index + 1}
                       pageNumber={index + 1}
-                      rotate={rotate}
-                      onClick={() => {
-                        setRotate(rotate + 90);
-                      }}
+                      rotate={rotate[index]}
+                      onClick={() => handleRotate(index)}
                     />
                     <div className="text-center">{index + 1}</div>
                   </div>
                 ))}
               </Document>
+              {/* </div> */}
             </div>
           )}
         </div>
