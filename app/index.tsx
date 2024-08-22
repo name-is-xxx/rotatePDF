@@ -85,6 +85,7 @@ export default function Index() {
   const [file, setFile] = useState<File>();
   const [numPages, setNumPages] = useState();
   const [rotate, setRotate] = useState<number[]>([]);
+  const [scale, setScale] = useState<number[]>([176, 250]);
   const handleShow = useCallback(() => {
     setShow(!show);
   }, [show]);
@@ -105,6 +106,19 @@ export default function Index() {
     }
     setRotate(temp);
   }
+
+  function handleScale(sign: Number) {
+    if (sign === 1) {
+      console.log("放大");
+      setScale([scale[0] + 16, scale[1] + 32]);
+    }
+    if (sign === -1) {
+      console.log("缩小");
+      setScale([scale[0] - 16, scale[1] - 32]);
+    }
+  }
+
+  function handleDownload() {}
 
   return (
     <main>
@@ -150,101 +164,111 @@ export default function Index() {
             modified PDF.
           </p>
         </div>
-        <div className="w-full flex justify-center">
-          {!upload ? (
-            <FileBefore setUpload={setUpload} setFile={setFile} />
-          ) : (
-            <div>
-              <div className="flex justify-center items-center space-x-3 selecto-ignore">
-                <button
-                  className="bg-orange text-white px-3 py-2.5 rounded"
-                  aria-label="全部旋转"
-                  data-microtip-position="top"
-                  role="tooltip"
-                  onClick={() => handleRotate(-1)}
-                >
-                  全部旋转
-                </button>
-                <button
-                  className="bg-blackgray text-white px-3 py-2.5 rounded"
-                  aria-label="删除此PDF并选择新的"
-                  data-microtip-position="top"
-                  role="tooltip"
-                  onClick={() => {
-                    setUpload(false);
-                    setFile(undefined);
-                    setNumPages(undefined);
-                  }}
-                >
-                  删除 PDF
-                </button>
-                <button
-                  className="bg-[#ff612f] shadow rounded-full p-2 flex items-center justify-center hover:scale-105 grow-0 shrink-0 disabled:opacity-50 !bg-white"
-                  aria-label="放大"
-                  data-microtip-position="top"
-                  role="tooltip"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    className="w-5 h-5"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"
-                    />
-                  </svg>
-                </button>
-                <button
-                  className="bg-[#ff612f] shadow rounded-full p-2 flex items-center justify-center hover:scale-105 grow-0 shrink-0 disabled:opacity-50 !bg-white"
-                  aria-label="缩小"
-                  data-microtip-position="top"
-                  role="tooltip"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    className="w-5 h-5"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM13.5 10.5h-6"
-                    />
-                  </svg>
-                </button>
-              </div>
-              {/* <div > */}
-              <Document
-                className="m-5"
-                file={file}
-                onLoadSuccess={onDocumentLoadSuccess}
+
+        {!upload ? (
+          <FileBefore setUpload={setUpload} setFile={setFile} />
+        ) : (
+          <>
+            <div className="flex justify-center items-center space-x-3 selecto-ignore">
+              <button
+                className="bg-orange text-white px-3 py-2.5 rounded min-w-fit"
+                aria-label="全部旋转"
+                data-microtip-position="top"
+                role="tooltip"
+                onClick={() => handleRotate(-1)}
               >
-                {Array.from(new Array(numPages), (_, index) => (
-                  <div className="bg-[#fff] p-2.5 m-3">
-                    <Thumbnail
-                      width={176}
-                      height={250}
-                      key={index + 1}
-                      pageNumber={index + 1}
-                      rotate={rotate[index]}
-                      onClick={() => handleRotate(index)}
-                    />
-                    <div className="text-center">{index + 1}</div>
-                  </div>
-                ))}
-              </Document>
-              {/* </div> */}
+                全部旋转
+              </button>
+              <button
+                className="bg-blackgray text-white px-3 py-2.5 rounded min-w-fit"
+                aria-label="删除此PDF并选择新的"
+                data-microtip-position="top"
+                role="tooltip"
+                onClick={() => {
+                  setUpload(false);
+                  setFile(undefined);
+                  setNumPages(undefined);
+                }}
+              >
+                删除 PDF
+              </button>
+              <button
+                className="bg-[#ff612f] shadow rounded-full p-2 flex items-center justify-center hover:scale-105 grow-0 shrink-0 disabled:opacity-50 !bg-white"
+                aria-label="放大"
+                data-microtip-position="top"
+                role="tooltip"
+                onClick={() => handleScale(1)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"
+                  />
+                </svg>
+              </button>
+              <button
+                className="bg-[#ff612f] shadow rounded-full p-2 flex items-center justify-center hover:scale-105 grow-0 shrink-0 disabled:opacity-50 !bg-white"
+                aria-label="缩小"
+                data-microtip-position="top"
+                role="tooltip"
+                onClick={() => handleScale(-1)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM13.5 10.5h-6"
+                  />
+                </svg>
+              </button>
             </div>
-          )}
-        </div>
+            <Document
+              className="flex flex-wrap justify-center"
+              file={file}
+              onLoadSuccess={onDocumentLoadSuccess}
+            >
+              {Array.from(new Array(numPages), (_, index) => (
+                <div className="bg-[#fff] p-2.5 m-3">
+                  <Thumbnail
+                    width={scale[0]}
+                    height={scale[1]}
+                    key={index + 1}
+                    pageNumber={index + 1}
+                    rotate={rotate[index]}
+                    onClick={() => handleRotate(index)}
+                  />
+                  <div className="text-center">{index + 1}</div>
+                </div>
+              ))}
+            </Document>
+            <div className="flex flex-col justify-center items-center space-y-3 selecto-ignore">
+              <button
+                className="bg-orange text-white px-3 py-2.5 rounded min-w-fit"
+                aria-label="Split and download PDF"
+                data-microtip-position="top"
+                role="tooltip"
+                onClick={() => handleDownload()}
+              >
+                Download
+              </button>
+            </div>
+          </>
+        )}
       </div>
       <footer className="bg-white" aria-labelledby="footer-heading">
         <div className="mx-auto max-w-7xl px-6 pb-8 mt-8 sm:mt-12 lg:px-8 lg:mt-16 border-t border-gray-900/10 pt-16">
