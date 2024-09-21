@@ -15,3 +15,5 @@ export default function RootLayout({
     </html>
   );
 }
+// 有服务器 pnpm start
+// 无服务器 pnpm dev

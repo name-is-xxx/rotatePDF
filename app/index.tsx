@@ -3,6 +3,7 @@ import styles from "@/app/page.module.css";
 import { lusitana } from "@/app/ui/fonts";
 import { useCallback, useState } from "react";
 import { pdfjs, Document, Thumbnail } from "react-pdf";
+import { degrees, PDFDocument } from "pdf-lib";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -83,7 +84,7 @@ export default function Index() {
   const [show, setShow] = useState(false);
   const [upload, setUpload] = useState(false);
   const [file, setFile] = useState<File>();
-  const [numPages, setNumPages] = useState();
+  const [numPages, setNumPages] = useState<number>();
   const [rotate, setRotate] = useState<number[]>([]);
   const [scale, setScale] = useState<number[]>([176, 250]);
   const handleShow = useCallback(() => {
@@ -102,7 +103,11 @@ export default function Index() {
         temp[n] += 90;
       });
     } else {
-      temp[index] += 90;
+      if (temp[index] + 90 < 360) {
+        temp[index] += 90;
+      } else {
+        temp[index] = 0;
+      }
     }
     setRotate(temp);
   }
@@ -118,7 +123,31 @@ export default function Index() {
     }
   }
 
-  function handleDownload() {}
+  async function handleDownload() {
+    if (file && numPages !== 0) {
+      // 由于react-pdf只能看不能改，因此需利用pdf-lib对文件进行编辑保存
+      // 将file（特殊的blob）转为ArrayBuffer类型，返回一个 Promise，包含 blob 二进制数据内容的ArrayBuffer
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await PDFDocument.load(arrayBuffer);
+      // 获取页面
+      const pages = pdf.getPages();
+      let i = 0;
+      for (let page of pages) {
+        page.setRotation(degrees(rotate[i]));
+        i++;
+      }
+      const pdfBytes = await pdf.save();
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "example.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  }
 
   return (
     <main>
