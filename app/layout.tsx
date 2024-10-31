@@ -1,11 +1,11 @@
 import "@/app/ui/global.css";
-import Index from ".";
+import PDF from "./pdf";
 
 export default function RootLayout() {
   return (
     <html lang="en">
       <body>
-        <Index />
+        <PDF />
       </body>
     </html>
   );
