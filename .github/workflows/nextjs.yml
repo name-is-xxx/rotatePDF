@@ -55,6 +55,11 @@ jobs:
             echo "Unable to determine package manager"
             exit 1
           fi
+      # 下载pnpm，因为项目使用的是pnpm，如果使用的是npm或yarn则不需要
+      - name: Install pnpm
+        run: |
+          npm install -g pnpm
+          echo "PATH=$PATH" >> $GITHUB_ENV
       # 设置Node.js环境
       - name: Setup Node
         uses: actions/setup-node@v4
