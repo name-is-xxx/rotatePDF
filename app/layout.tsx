@@ -1,12 +1,15 @@
 import "@/app/ui/global.css";
-import PDF from "./pdf";
 
-export default function RootLayout() {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  console.log("11", children);
   return (
     <html lang="en">
-      <body>
-        <PDF />
-      </body>
+      <head></head>
+      <body>{children}</body>
     </html>
   );
 }
