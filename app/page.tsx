@@ -76,7 +76,6 @@ export default function Index() {
             <button
               className="bg-blackgray text-white px-3 py-2.5 rounded min-w-fit"
               aria-label="删除此PDF并选择新的"
-              data-microtip-position="top"
               role="tooltip"
               onClick={() => {
                 setUpload(false);

@@ -1,0 +1,17 @@
+.top {
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.title{
+    display: flex;
+    align-items:center;
+}
+.img{
+    display: flex;
+    align-items: center;
+    height: 18px;
+    width: auto;
+}
