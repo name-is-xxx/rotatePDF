@@ -2,6 +2,7 @@
 
 const nextConfig = {
   output: "export",
+  basePath: "/rotatePDF/",
   webpack: (config) => {
     config.resolve.alias.canvas = false;
     return config;
