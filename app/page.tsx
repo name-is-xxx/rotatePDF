@@ -4,6 +4,7 @@ import { lusitana } from "@/app/ui/fonts";
 import { useCallback, useState } from "react";
 import { pdfjs, Document, Thumbnail } from "react-pdf";
 import { degrees, PDFDocument } from "pdf-lib";
+import icon from "@/public/favicon.ico";
 
 // 外部加载
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
@@ -310,7 +311,7 @@ export default function Index() {
         <div className="mx-auto max-w-7xl px-6 pb-8 mt-8 sm:mt-12 lg:px-8 lg:mt-16 border-t border-gray-900/10 pt-16">
           <div className="xl:grid xl:grid-cols-3 xl:gap-8">
             <div className="space-y-8">
-              <img className="h-7" src="/favicon.ico" alt="PDF.ai logo" />
+              <img className="h-7" src={icon.src} alt="PDF.ai logo" />
               <div className="text-sm leading-6 text-gray-600">
                 Chat with any PDF: ask questions, get summaries, find
                 information, and more.

@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
+const isProd = process.env.NODE_ENV === "production";
 
 const nextConfig = {
   output: "export",
-  basePath: "/rotatePDF/",
+  basePath: isProd ? "/rotatePDF/" : "",
   webpack: (config) => {
     config.resolve.alias.canvas = false;
     return config;
